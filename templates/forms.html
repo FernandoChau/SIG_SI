@@ -11,6 +11,7 @@
   <link rel="modulepreload" href="https://tailwindcss.com/plus-assets/build/assets/iframe-BUCe_xEG.js">
   <script type="module" src="https://tailwindcss.com/plus-assets/build/assets/iframe-BUCe_xEG.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
   <script>
     window.addEventListener('load', () => window.setTimeout(() => {
@@ -63,6 +64,7 @@
 <body>
   <div class="bg-gray-100">
     <div class="min-h-full">
+
       <div class="fixed inset-x-0 top-0 bg-blue-800 z-0 h-96 blur-2xl ">
         <img src="/static/img2.jpg" class="h-full w-full object-cover -rotate-30" alt="">
       </div>
@@ -89,7 +91,7 @@
 
                   <a href="/proteger" aria-current="page"
                     class="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-blue-800/80">
-                    
+
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                       stroke="currentColor" class="size-5">
                       <path stroke-linecap="round" stroke-linejoin="round"
@@ -244,7 +246,8 @@
 
       <main>
         <div class="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
-          <div class="isolate bg-white border border-gray-200 rounded-2xl shadow px-4 py-18 sm:py-20 lg:px-6">
+          <div class="isolate bg-white border border-gray-200 rounded-2xl shadow px-4 py-18 sm:py-20 lg:px-6"
+            x-data="decoder()">
             <div aria-hidden="true"
               class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
               <div
@@ -253,34 +256,51 @@
               </div>
             </div>
             <div class="mx-auto max-w-2xl text-center">
+              {% with messages = get_flashed_messages() %}
+              {% if messages %}
+              <div class="space-y-2">
+                {% for msg in messages %}
+                <div class="p-4 rounded-md bg-red-50 border border-red-200 text-red-800">{{ msg }}</div>
+                {% endfor %}
+              </div>
+              {% endif %}
+              {% endwith %}
               <h2 class="text-4xl font-bold tracking-tight text-balance text-gray-900 sm:text-5xl">Proteja a Sua
                 Mensagem</h2>
               <p class="mt-2 text-lg/8 text-gray-600">Aute magna irure deserunt veniam aliqua magna enim voluptate.</p>
             </div>
-            <form action="#" method="POST" class="mx-auto mt-16 max-w-xl sm:mt-20">
+            <form action="/decode" method="POST" enctype="multipart/form-data" class="mx-auto mt-16 max-w-xl sm:mt-20"
+              @submit.prevent="submitDecode" id="decodeForm">
               <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-              
-                  <div class="sm:col-span-2">
-                    <label for="password" class="block text-sm/6 font-medium text-gray-900">Password</label>
-                    <div class="mt-2">
-                      <input id="password" type="password" name="password" required autocomplete="current-password"
-                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
-                    </div>
-                  </div>
 
-                  <div class="sm:col-span-2">
-                    <label for="file" class="block text-sm/6 font-medium text-gray-900">Imagem (PNG)</label>
-                    <div class="mt-2.5">
-                      <input type="file"
-                        class="focus:border-ring-brand-300 shadow-theme-xs focus:file:ring-brand-300 h-11 w-full overflow-hidden rounded-lg border border-gray-300 bg-transparent text-sm text-gray-500 transition-colors file:mr-5 file:border-collapse file:cursor-pointer file:rounded-l-lg file:border-0 file:border-r file:border-solid file:border-gray-200 file:bg-gray-50 file:py-3 file:pr-3 file:pl-3.5 file:text-sm file:text-gray-700 placeholder:text-gray-400 hover:file:bg-gray-100 focus:outline-hidden ">
-                    </div>
+                <div class="sm:col-span-2">
+                  <label for="password" class="block text-sm/6 font-medium text-gray-900">Password</label>
+                  <div class="mt-2">
+                    <input id="password" type="password" x-model="password" name="password" required autocomplete="current-password"
+                      placeholder="Digite a senha (mínimo 8 caracteres)"
+                      x-bind:class="passwordLength ? 'focus:-outline-offset-2 focus:outline-red-500 focus:-outline-offset-2 outline-red-500 text-red-500' : ''"
+                      class=" placeholder:text-sm placeholder:font-light block w-full rounded-md bg-white px-3 py-1.5 h-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                    <p x-show="passwordLength" class="mt-1 text-xs text-red-500">senha cursta</p>
                   </div>
                 </div>
-                <div class="mt-4 sm:col-span-2">
-                  <button type="submit"
-                    class="block w-full rounded-md bg-blue-800 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-blue-800/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                    Mostrar Mensagem</button>
+
+                <div class="sm:col-span-2">
+                  <label for="file" class="block text-sm/6 font-medium text-gray-900">Imagem (PNG)</label>
+                  <div class="mt-2.5">
+                    <input type="file" @change="onFileChange($event)" required accept="image/png" name="image"
+                      class="focus:border-ring-brand-300 shadow-theme-xs focus:file:ring-brand-300 h-11 w-full overflow-hidden rounded-lg border border-gray-300 bg-transparent text-sm text-gray-500 transition-colors file:mr-5 file:border-collapse file:cursor-pointer file:rounded-l-lg file:border-0 file:border-r file:border-solid file:border-gray-200 file:bg-gray-50 file:py-3 file:pr-3 file:pl-3.5 file:text-sm file:text-gray-700 placeholder:text-gray-400 hover:file:bg-gray-100 focus:outline-hidden ">
+                  </div>
                 </div>
+              </div>
+              <div class="mt-4 sm:col-span-2">
+                <button type="submit" :disabled="!canSubmit"
+                  class="block w-full rounded-md bg-blue-800 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-blue-800/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                  <span x-show="!loading">Mostrar Mensagem</span>
+                  <span x-show="loading">A processar...</span>
+                </button>
+              </div>
+              <p class="mt-3 text-xs text-slate-500">Se a senha estiver errada ou a imagem foi alterada, a decodificação
+                falhará.</p>
             </form>
           </div>
 
@@ -288,7 +308,75 @@
       </main>
     </div>
   </div>
-  <script></script>
+  <script>
+    function encoder() {
+      return {
+        message: '',
+        password: '',
+        password_confirm: '',
+        isGreaterThan8: '',
+        file: null,
+        loading: false,
+        get passwordLength() { if (this.password.length > 0) return this.password.length < 8 ? true : false },
+        get passwordsMatch() { return this.password !== '' && this.password === this.password_confirm },
+        get canSubmit() { return this.password.length >= 8 && this.passwordsMatch && this.file },
+        onFileChange(e) { this.file = e.target.files[0]; },
+        resetForm() { this.message = ''; this.password = ''; this.password_confirm = ''; this.file = null; document.getElementById('encodeForm').reset(); },
+        async submitEncode() {
+          if (!this.canSubmit) return;
+          this.loading = true;
+          this.resetForm();
+          const form = new FormData(document.getElementById('encodeForm'));
+          try {
+            const res = await fetch('/encode', { method: 'POST', body: form });
+            if (!res.ok) {
+              window.location.href = '/';
+              return;
+            }
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'encoded.png';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+          } catch (err) {
+            console.error(err);
+            window.location.href = '/';
+            console.log("erro:", err);
+          } finally { this.loading = false }
+        }
+      }
+    }
+    function decoder() {
+      return {
+        password: '',
+        file: null,
+        loading: false,
+        get passwordLength() { if (this.password.length > 0) return this.password.length < 8 ? true : false },
+        get canSubmit() { return this.password.length >= 8 && this.file },
+        onFileChange(e) { this.file = e.target.files[0]; },
+        resetForm() { this.password = ''; this.file = null; document.getElementById('decodeForm').reset(); },
+        async submitDecode() {
+          if (!this.canSubmit) return;
+          this.loading = true;
+          const form = new FormData(document.getElementById('decodeForm'));
+          try {
+            const res = await fetch('/decode', { method: 'POST', body: form });
+            const text = await res.text();
+            document.open();
+            document.write(text);
+            document.close();
+          } catch (err) {
+            console.error(err);
+            window.location.href = '/';
+          } finally { this.loading = false }
+        }
+      }
+    }
+  </script>
 </body>
 
 </html>

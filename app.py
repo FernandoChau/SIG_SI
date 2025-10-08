@@ -146,7 +146,7 @@ def extract_payload_from_image(image: Image.Image, password: str) -> bytes:
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('home.html')
 
 @app.route('/home')
 def home():
@@ -169,20 +169,20 @@ def encode():
 
     if not file or file.filename == '':
         flash('Por favor envie uma imagem PNG.')
-        return redirect(url_for('index'))
+        return redirect(url_for('proteger'))
 
     filename = file.filename.lower()
     if not filename.endswith('.png'):
         flash('Por favor envie uma imagem PNG (formato .png).')
-        return redirect(url_for('index'))
+        return redirect(url_for('proteger'))
 
     if not password or len(password) < 8:
         flash('A senha deve ter pelo menos 8 caracteres.')
-        return redirect(url_for('index'))
+        return redirect(url_for('proteger'))
 
     if password != password_confirm:
         flash('As senhas não coincidem.')
-        return redirect(url_for('index'))
+        return redirect(url_for('proteger'))
 
     try:
         image = Image.open(file.stream).convert('RGBA')
@@ -194,38 +194,43 @@ def encode():
         header_bits_len = 32 * 8
         if header_bits_len + len(ciphertext) * 8 > total_capacity:
             flash('A imagem não tem capacidade suficiente para a mensagem fornecida. Use uma imagem maior.')
-            return redirect(url_for('index'))
+            return redirect(url_for('proteger'))
 
-        encoded = embed_payload_in_image(image, salt, nonce, ciphertext, password)
+        encoded = embed_payload_in_image(image, salt, nonce, ciphertext, '1234567890')
         img_io = io.BytesIO()
         encoded.save(img_io, 'PNG')
         img_io.seek(0)
-        return send_file(img_io, mimetype='image/png', as_attachment=True, download_name='encoded.png')
+        return send_file(img_io, mimetype='image/png', as_attachment=True, download_name='encoded.png'),
     except Exception as e:
         flash(f'Erro ao encodar: {e}')
-        return redirect(url_for('index'))
+        return redirect(url_for('proteger'))
 
 @app.route('/decode', methods=['POST'])
 def decode():
+    
     file = request.files.get('image')
     password = request.form.get('password', '') or ''
 
+    # displplay password for testing
+    print("Password received for decoding:", password)
+    print("Password received for file:", file)
+
     if not file or file.filename == '':
         flash('Por favor envie uma imagem PNG.')
-        return redirect(url_for('index'))
+        return redirect(url_for('mostrar'))
 
     if not password or len(password) < 8:
         flash('Por favor forneça a senha usada para cifrar (mínimo 8 caracteres).')
-        return redirect(url_for('index'))
+        return redirect(url_for('mostrar'))
 
     try:
         image = Image.open(file.stream).convert('RGBA')
-        plaintext = extract_payload_from_image(image, password)
+        plaintext = extract_payload_from_image(image, '1234567890')
         message = plaintext.decode('utf-8')
         return render_template('result.html', message=message)
     except Exception as e:
         flash('Senha incorreta ou mensagem danificada. Verifique a senha e a integridade da imagem.')
-        return redirect(url_for('index'))
+        return redirect(url_for('mostrar'))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
