@@ -1,0 +1,216 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="/static/css/home.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@insiders" type="module"></script>
+    <script src="/plus-assets/build/iframe/components.js?hash=25df7d34d043de1c316a31211aa744b1"></script>
+    <link rel="modulepreload" href="https://tailwindcss.com/plus-assets/build/assets/iframe-BUCe_xEG.js">
+    <script type="module" src="https://tailwindcss.com/plus-assets/build/assets/iframe-BUCe_xEG.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.addEventListener('load', () => window.setTimeout(() => {
+            const makeLink = (asset) => {
+                const link = document.createElement('link')
+
+                Object.keys(asset).forEach((attribute) => {
+                    link.setAttribute(attribute, asset[attribute])
+                })
+
+                return link
+            }
+
+            const loadNext = (assets, count) => window.setTimeout(() => {
+                if (count > assets.length) {
+                    count = assets.length
+
+                    if (count === 0) {
+                        return
+                    }
+                }
+
+                const fragment = new DocumentFragment
+
+                while (count > 0) {
+                    const link = makeLink(assets.shift())
+                    fragment.append(link)
+                    count--
+
+                    if (assets.length) {
+                        link.onload = () => loadNext(assets, 1)
+                        link.onerror = () => loadNext(assets, 1)
+                    }
+                }
+
+                document.head.append(fragment)
+            })
+
+            loadNext([], 3)
+        }))
+    </script>
+    <style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="overflow-hidden" style="height: 100vh;">
+        <div class="bg-white">
+            <header class="absolute inset-x-0 top-0 z-50">
+                <nav aria-label="Global" class="flex items-center justify-between h-12 lg:px-8">
+                    <div class="flex lg:flex-1">
+                        <!-- <a href="#" class="-m-1.5 p-1.5">
+                            <span class="sr-only">Your Company</span>
+                            <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&amp;shade=600"
+                                alt="" class="h-8 w-auto">
+                        </a> -->
+                    </div>
+                    <div class="flex lg:hidden">
+                        <button type="button" command="show-modal" commandfor="mobile-menu"
+                            class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+                            aria-expanded="false">
+                            <span class="sr-only">Open main menu</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                data-slot="icon" aria-hidden="true" class="size-6">
+                                <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" stroke-linecap="round"
+                                    stroke-linejoin="round"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="hidden lg:flex lg:gap-x-12">
+                        <a href="/home" class="flex items-center rounded gap-2 text-sm/6 font-semibold text-blue-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                            </svg>
+                            <p>Home</p>
+                        </a>
+                        <a href="/proteger" class="flex items-center gap-2 text-sm/6 font-semibold text-gray-500 hover:text-blue-800/50">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+                            </svg>
+                            <p>Proteger</p>
+                        </a>
+                        <a href="/mostrar" class="flex items-center gap-2 text-sm/6 font-semibold text-gray-500 hover:text-blue-800/50">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-5">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.25-8.25-3.286Zm0 13.036h.008v.008H12v-.008Z" />
+                            </svg>
+                            <p>Mostrar</p>
+                        </a>
+                    </div>
+                    <div class="hidden lg:flex lg:flex-1 lg:justify-end">
+                        <!-- <a href="#" class="text-sm/6 font-semibold text-gray-900">Log in <span
+                                aria-hidden="true">→</span></a> -->
+                    </div>
+                </nav>
+                <el-dialog>
+                    <dialog id="mobile-menu" class="backdrop:bg-transparent lg:hidden"
+                        style="right: var(--el-top-layer-scrollbar-offset, 0px);">
+                        <div tabindex="0" class="fixed inset-0 focus:outline-none">
+                            <el-dialog-panel
+                                class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+                                <div class="flex items-center justify-between">
+                                    <a href="#" class="-m-1.5 p-1.5">
+                                        <!-- <span class="sr-only">Your Company</span>
+                                        <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&amp;shade=600"
+                                            alt="" class="h-8 w-auto"> -->
+                                    </a>
+                                    <button type="button" command="close" commandfor="mobile-menu"
+                                        class="-m-2.5 rounded-md p-2.5 text-gray-700" aria-expanded="false">
+                                        <span class="sr-only">Close menu</span>
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            data-slot="icon" aria-hidden="true" class="size-6">
+                                            <path d="M6 18 18 6M6 6l12 12" stroke-linecap="round"
+                                                stroke-linejoin="round"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="mt-6 flow-root">
+                                    <div class="-my-6 divide-y divide-gray-500/10">
+                                        <div class="space-y-2 py-6">
+                                            <a href="/home"
+                                                class="-mx-3 flex items-center gap-2 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="2" stroke="currentColor" class="size-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                                                </svg>
+                                                <p>Home</p>
+                                            </a>
+                                            <a href="/proteger"
+                                                class="-mx-3 flex items-center gap-2 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="2" stroke="currentColor" class="size-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+                                                </svg>
+                                                <p>Proteger</p>
+                                            </a>
+                                            <a href="/mostrar"
+                                                class="-mx-3 flex items-center gap-2 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                                    stroke-width="2" stroke="currentColor" class="size-5">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        d="M12 9v3.75m0-10.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.75c0 5.592 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.57-.598-3.75h-.152c-3.196 0-6.1-1.25-8.25-3.286Zm0 13.036h.008v.008H12v-.008Z" />
+                                                </svg>
+                                                <p>Mostrar</p>
+                                            </a>
+                                        </div>
+                                        <!-- <div class="py-6">
+                                            <a href="#"
+                                                class="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">Log
+                                                in</a>
+                                        </div> -->
+                                    </div>
+                                </div>
+                            </el-dialog-panel>
+                        </div>
+                    </dialog>
+                </el-dialog>
+            </header>
+
+            <div class="relative isolate px-6 lg:px-8">
+                <div class="absolute bg-blue-300 inset-0 -z-10 overflow-hidden blur-3xl opacity-35">
+                    <img src="/static/img2.jpg" class="w-[150%] h-[150%] object-cover rotate-30" alt="">
+                </div>
+                <div class="mx-auto max-w-2xl py-28 sm:py-40 lg:py-48">
+
+                    <div class="text-center">
+                        <h1 class="text-5xl font-semibold tracking-tight text-balance text-gray-950 sm:text-7xl">
+                            Oculte Sua Mensagem de Texto em uma Imagem!</h1>
+                        <p class="mt-8 text-lg font-medium text-pretty text-gray-500 sm:text-xl/8">Anim aute id magna
+                            aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet fugiat
+                            veniam occaecat.</p>
+                        <div class="mt-10 flex items-center justify-center gap-x-6">
+                            <a href="/proteger"
+                                class="rounded-md bg-blue-800 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-800/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Ocultar
+                                Mensagem</a>
+                            <a href="/mostrar" class="text-sm/6 font-semibold text-gray-900"> Mostrar Texto <span
+                                    aria-hidden="true">→</span></a>
+                        </div>
+                    </div>
+                </div>
+                <div aria-hidden="true"
+                    class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
+                    <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"
+                        class="relative left-[calc(50%+3rem)] aspect-1155/678 w-144.5 -translate-x-1/2 bg-linear-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%+36rem)] sm:w-288.75">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script></script>
+</body>
+
+</html>

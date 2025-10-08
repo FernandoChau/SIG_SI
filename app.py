@@ -148,6 +148,18 @@ def extract_payload_from_image(image: Image.Image, password: str) -> bytes:
 def index():
     return render_template('index.html')
 
+@app.route('/home')
+def home():
+    return render_template('home.html')
+
+@app.route('/proteger')
+def proteger():
+    return render_template('form-elements.html')
+
+@app.route('/mostrar')
+def mostrar():
+    return render_template('forms.html')
+
 @app.route('/encode', methods=['POST'])
 def encode():
     file = request.files.get('image')
