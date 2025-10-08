@@ -200,7 +200,7 @@ def encode():
         img_io = io.BytesIO()
         encoded.save(img_io, 'PNG')
         img_io.seek(0)
-        return send_file(img_io, mimetype='image/png', as_attachment=True, download_name='encoded.png'),
+        return send_file(img_io, mimetype='image/png', as_attachment=True, download_name='encoded.png')
     except Exception as e:
         flash(f'Erro ao encodar: {e}')
         return redirect(url_for('proteger'))
