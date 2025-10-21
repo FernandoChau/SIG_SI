@@ -270,38 +270,57 @@
               enctype="multipart/form-data" class="mx-auto mt-16 max-w-xl sm:mt-20">
               <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
                 <div class="sm:col-span-2">
-                  <div class="grid grid-cols-1 mb-4 gap-x-8 gap-y-6 sm:grid-cols-2">
+                  <label class="block text-sm font-medium text-gray-700">O que deseja embutir?</label>
+                  <div class="mt-2 flex items-center gap-4">
+                    <label class="inline-flex items-center">
+                      <input type="radio" name="embed_type" value="text" checked class="form-radio" x-model="embedType">
+                      <span class="ml-2">Texto</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                      <input type="radio" name="embed_type" value="file" class="form-radio" x-model="embedType">
+                      <span class="ml-2">Ficheiro / Media</span>
+                    </label>
+                  </div>
+
+                  <div class="mt-4" x-show="embedType === 'text'">
+                    <label for="message" class="block text-sm/6 font-semibold text-gray-900">Message</label>
+                    <div class="mt-2.5">
+                      <textarea id="message" name="message" rows="2" x-model="message"
+                        placeholder="Escreva a mensagem que deseja ocultar..."
+                        class=" placeholder:text-sm placeholder:font-light block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"></textarea>
+                    </div>
+                  </div>
+
+                  <div class="mt-4" x-show="embedType === 'file'">
+                    <label class="block text-sm font-medium text-gray-700">Ficheiro a embutir</label>
+                    <div class="mt-2.5">
+                      <input type="file" name="payload" accept="*/*" @change="onPayloadChange($event)"
+                        class="h-11 w-full overflow-hidden rounded-lg border border-gray-300 bg-transparent text-sm text-gray-500" />
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 mb-4 gap-x-8 gap-y-6 sm:grid-cols-2 mt-4">
                     <div>
                       <label for="password" class="block text-sm/6 font-medium text-gray-900">Password</label>
                       <div class="mt-2">
                         <input id="password" type="password" name="password" x-model="password" required 
                           autocomplete="current-password"
                           placeholder="Digite a senha (mínimo 8 caracteres)"
-                          x-bind:class="passwordLength ? 'focus:-outline-offset-2 focus:outline-red-500 focus:-outline-offset-2 outline-red-500 text-red-500' : ''"
                           class=" placeholder:text-sm placeholder:font-light block w-full rounded-md bg-white px-3 py-1.5 h-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
-                        <p x-show="passwordLength" class="mt-1 text-xs text-red-500">senha cursta</p>
+                        <p x-show="passwordLength" class="mt-1 text-xs text-red-500">senha curta</p>
                       </div>
                     </div>
 
                     <div>
-                      <label for="password" class="block text-sm/6 font-medium text-gray-900">Confirmar Password</label>
+                      <label for="password_confirm" class="block text-sm/6 font-medium text-gray-900">Confirmar Password</label>
                       <div class="mt-2">
-                        <input name="password_confirm" type="password" x-model="password_confirm" required
+                        <input id="password_confirm" name="password_confirm" type="password" x-model="password_confirm" required
                           autocomplete="current-password"
                           placeholder="Digite a mesma senha novamente"
                           class="placeholder:text-sm placeholder:font-light block w-full rounded-md bg-white h-10 px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                         <p class="mt-1 text-xs" x-bind:class="passwordsMatch ? 'text-emerald-600' : 'text-rose-600'"
                           x-show="passwordsMatch">Senhas coincidem</p>
                       </div>
-                    </div>
-                  </div>
-
-                  <div class="sm:col-span-2 mb-4">
-                    <label for="message" class="block text-sm/6 font-semibold text-gray-900">Message</label>
-                    <div class="mt-2.5">
-                      <textarea id="message" name="message" rows="2" required x-model="message"
-                        placeholder="Escreva a mensagem que deseja ocultar..."
-                        class=" placeholder:text-sm placeholder:font-light block w-full rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"></textarea>
                     </div>
                   </div>
 
@@ -319,7 +338,7 @@
                   <button type="submit" :disabled="!canSubmit"
                     class="block w-full rounded-md bg-blue-800 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-blue-800/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                     <span x-show="loading">A processar...</span>
-                    <span x-show="!loading"></span>Ocultar Mensagem</span>
+                    <span x-show="!loading">Ocultar Mensagem</span>
                 </button>
                 </div>
                 <p class="mt-3 text-xs text-slate-500">Nota: Use imagens PNG sem compressão (evite JPEG).</p>
@@ -337,12 +356,20 @@
         password: '',
         password_confirm: '',
         file: null,
+        payloadFile: null,
+        embedType: 'text',
         loading: false,
         get passwordLength() { if (this.password.length > 0) return this.password.length < 8 ? true : false },
         get passwordsMatch() { return this.password !== '' && this.password === this.password_confirm },
-        get canSubmit() { return this.password.length >= 8 && this.passwordsMatch && this.file },
+        get canSubmit() {
+          if (this.password.length < 8 || !this.passwordsMatch) return false;
+          if (!this.file) return false;
+          if (this.embedType === 'text') return this.message.length > 0;
+          return this.payloadFile != null;
+        },
         onFileChange(e) { this.file = e.target.files[0]; },
-        resetForm() { this.message = ''; this.password = ''; this.password_confirm = ''; this.file = null; document.getElementById('encodeForm').reset(); },
+        onPayloadChange(e) { this.payloadFile = e.target.files[0]; },
+        resetForm() { this.message = ''; this.password = ''; this.password_confirm = ''; this.file = null; this.payloadFile = null; document.getElementById('encodeForm').reset(); },
         async submitEncode() {
           if (!this.canSubmit) return;
           this.loading = true;
@@ -353,10 +380,6 @@
               window.location.href = '/';
               return;
             }
-            console.log("Submitting form with password:", this.password);
-            console.log("Submitting form with confirm password:", this.password_confirm);
-            console.log("Submitting form with message:", this.message);
-            console.log("Submitting form with file:", this.file ? this.file.name : 'No file');
             const blob = await res.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -366,6 +389,7 @@
             a.click();
             a.remove();
             window.URL.revokeObjectURL(url);
+            this.resetForm();
           } catch (err) {
             console.error(err);
             window.location.href = '/';

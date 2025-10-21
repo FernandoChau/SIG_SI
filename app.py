@@ -1,9 +1,14 @@
 from flask import Flask, render_template, request, send_file, redirect, url_for, flash
 from PIL import Image
 import io, struct, os, hashlib, secrets, random
+import mimetypes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+import time
+
+# In-memory temporary store for decoded embedded files (token -> {data, filename, mime, expiry})
+embedded_store = {}
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'aaa51bcb0a2bf4a596fc8f87c18a8cca52cb82e58605591147d1e50a5a5a19f5')
@@ -166,6 +171,7 @@ def encode():
     message = request.form.get('message', '') or ''
     password = request.form.get('password', '') or ''
     password_confirm = request.form.get('password_confirm', '') or ''
+    embed_type = request.form.get('embed_type', 'text') or 'text'
 
     if not file or file.filename == '':
         flash('Por favor envie uma imagem PNG.')
@@ -186,7 +192,25 @@ def encode():
 
     try:
         image = Image.open(file.stream).convert('RGBA')
-        plaintext = message.encode('utf-8')
+        # Build plaintext structure: 1 byte type, 4 bytes filename length, filename bytes, payload bytes
+        if embed_type == 'text':
+            if not message:
+                flash('Por favor forneça a mensagem de texto a embutir.')
+                return redirect(url_for('proteger'))
+            type_flag = b'\x00'
+            filename_bytes = b''
+            payload_bytes = message.encode('utf-8')
+        else:
+            # file embedding
+            payload_file = request.files.get('payload')
+            if not payload_file or payload_file.filename == '':
+                flash('Por favor envie um ficheiro para embutir.')
+                return redirect(url_for('proteger'))
+            type_flag = b'\x01'
+            filename_bytes = (payload_file.filename or '').encode('utf-8')
+            payload_bytes = payload_file.read()
+
+        plaintext = type_flag + struct.pack('>I', len(filename_bytes)) + filename_bytes + payload_bytes
         salt, nonce, ciphertext = encrypt_message(password, plaintext)
 
         width, height = image.size
@@ -196,7 +220,8 @@ def encode():
             flash('A imagem não tem capacidade suficiente para a mensagem fornecida. Use uma imagem maior.')
             return redirect(url_for('proteger'))
 
-        encoded = embed_payload_in_image(image, salt, nonce, ciphertext, '1234567890')
+        # Use the provided password to seed the PRNG for scattering ciphertext bits
+        encoded = embed_payload_in_image(image, salt, nonce, ciphertext, password)
         img_io = io.BytesIO()
         encoded.save(img_io, 'PNG')
         img_io.seek(0)
@@ -225,12 +250,62 @@ def decode():
 
     try:
         image = Image.open(file.stream).convert('RGBA')
-        plaintext = extract_payload_from_image(image, '1234567890')
-        message = plaintext.decode('utf-8')
-        return render_template('result.html', message=message)
+        plaintext = extract_payload_from_image(image, password)
+
+        # Parse plaintext structure
+        if len(plaintext) < 5:
+            raise ValueError('Payload inválido')
+        type_flag = plaintext[0]
+        filename_len = struct.unpack('>I', plaintext[1:5])[0]
+        filename = ''
+        payload_start = 5
+        if filename_len:
+            filename = plaintext[payload_start:payload_start+filename_len].decode('utf-8', errors='ignore')
+            payload_start += filename_len
+        payload = plaintext[payload_start:]
+
+        if type_flag == 0:
+            # text
+            message = payload.decode('utf-8', errors='replace')
+            return render_template('result.html', message=message)
+        else:
+            # file/media: store temporarily and render a download page with token
+            if not filename:
+                filename = 'extracted.bin'
+            mime_type, _ = mimetypes.guess_type(filename)
+            if not mime_type:
+                mime_type = 'application/octet-stream'
+            token = secrets.token_urlsafe(24)
+            # expiry in 5 minutes
+            embedded_store[token] = {
+                'data': payload,
+                'filename': filename,
+                'mime': mime_type,
+                'expiry': time.time() + 300
+            }
+            return render_template('result_file.html', filename=filename, size=len(payload), token=token)
     except Exception as e:
         flash('Senha incorreta ou mensagem danificada. Verifique a senha e a integridade da imagem.')
         return redirect(url_for('mostrar'))
+
+
+@app.route('/download/<token>')
+def download_token(token: str):
+    info = embedded_store.get(token)
+    if not info:
+        flash('Ficheiro expirado ou inválido.')
+        return redirect(url_for('mostrar'))
+    if info['expiry'] < time.time():
+        # expired
+        del embedded_store[token]
+        flash('Ficheiro expirou.')
+        return redirect(url_for('mostrar'))
+    data = info['data']
+    filename = info['filename']
+    mime = info['mime']
+    # optionally remove after first download
+    del embedded_store[token]
+    return send_file(io.BytesIO(data), as_attachment=True, download_name=filename, mimetype=mime)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)), debug=False)
