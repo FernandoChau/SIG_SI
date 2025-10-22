@@ -264,13 +264,13 @@
               {% endwith %}
               <h2 class="text-4xl font-bold tracking-tight text-balance text-gray-900 sm:text-5xl">Proteja a Sua
                 Mensagem</h2>
-              <p class="mt-2 text-lg/8 text-gray-600">Aute magna irure deserunt veniam aliqua magna enim voluptate.</p>
+              <p class="mt-2 text-lg/8 text-gray-600">Preencha o formulário a baixo para garantir a privacidade das suas informações.</p>
             </div>
             <form id="encodeForm" action="/encode" method="post" @submit.prevent="submitEncode"
-              enctype="multipart/form-data" class="mx-auto mt-16 max-w-xl sm:mt-20">
+              enctype="multipart/form-data" class="mx-auto mt-10 max-w-xl sm:mt-10">
               <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
                 <div class="sm:col-span-2">
-                  <label class="block text-sm font-medium text-gray-700">O que deseja embutir?</label>
+                  <label class="block text-sm/6 font-medium text-gray-900">O que deseja esconder?</label>
                   <div class="mt-2 flex items-center gap-4">
                     <label class="inline-flex items-center">
                       <input type="radio" name="embed_type" value="text" checked class="form-radio" x-model="embedType">
@@ -278,7 +278,7 @@
                     </label>
                     <label class="inline-flex items-center">
                       <input type="radio" name="embed_type" value="file" class="form-radio" x-model="embedType">
-                      <span class="ml-2">Ficheiro / Media</span>
+                      <span class="ml-2">Ficheiro</span>
                     </label>
                   </div>
 
@@ -292,10 +292,10 @@
                   </div>
 
                   <div class="mt-4" x-show="embedType === 'file'">
-                    <label class="block text-sm font-medium text-gray-700">Ficheiro a embutir</label>
+                    <label class="block text-sm/6 font-medium text-gray-900">Ficheiro a esconder</label>
                     <div class="mt-2.5">
                       <input type="file" name="payload" accept="*/*" @change="onPayloadChange($event)"
-                        class="h-11 w-full overflow-hidden rounded-lg border border-gray-300 bg-transparent text-sm text-gray-500" />
+                        class="focus:border-ring-brand-300 shadow-theme-xs focus:file:ring-brand-300 h-11 w-full overflow-hidden rounded-lg border border-gray-300 bg-transparent text-sm text-gray-500 transition-colors file:mr-5 file:border-collapse file:cursor-pointer file:rounded-l-lg file:border-0 file:border-r file:border-solid file:border-gray-200 file:bg-gray-50 file:py-3 file:pr-3 file:pl-3.5 file:text-sm file:text-gray-700 placeholder:text-gray-400 hover:file:bg-gray-100 focus:outline-hidden " />
                     </div>
                   </div>
 
